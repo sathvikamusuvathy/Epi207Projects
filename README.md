@@ -21,7 +21,7 @@ Asthma. 2017 Apr 21;54(4):371-5.
 * Rebekah Jung
 * Sukrity Ohja
 
-*E-MAIL/PHONE*
+*E-MAIL*
 
 Sofia Valenzuela: sofiavalenzuela@g.ucla.edu
 Sathvika Musuvathy: sathvikasm@g.ucla.edu
