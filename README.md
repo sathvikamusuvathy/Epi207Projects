@@ -1,4 +1,4 @@
-# Epi207: Assignment 1
+# Epi207: Reproductibility in Epidemiologic Research
 ---------
 
 ## Assignment 1: Reproducing Published CHIS Findings
