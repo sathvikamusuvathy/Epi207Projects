@@ -23,7 +23,7 @@ Asthma. 2017 Apr 21;54(4):371-5.
 * Sofia Valenzuela
 * Sathvika Musuvathy
 * Rebekah Jung
-* Sukrity Ohja
+* Sukrity Ojha
 
 *E-MAIL*
 
