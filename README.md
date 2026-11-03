@@ -1,11 +1,11 @@
-# Epi207: Reproductibility in Epidemiologic Research
+# Epi207: Reproducibility in Epidemiologic Research
 ---------
-## Assignment 2:
+# Assignment 2:
 
 ## Project Outputs
 
 
-## Assignment 1: Reproducing Published CHIS Findings
+# Assignment 1: Reproducing Published CHIS Findings
 Project description: We reproduced findings from the paper "Soda Consumption and Hospital Admissions among Californian Adults with Asthma" (Cisneros et al., 2017). This paper used CHIS data from 2011 and 2012. 
 
 ## Project Outputs
