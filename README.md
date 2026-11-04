@@ -2,7 +2,9 @@
 ---------
 # Assignment 2: Low Income and Non-Cigarette Tobacco/Nicotine Product Use Among California Young Adults
 
-## Research Question: Among California adults aged 18–29, is low household income (<200% of the federal poverty level) associated with current use of any non-cigarette tobacco or nicotine product, including e-cigarettes?
+## Research Question: 
+Among California adults aged 18–29, is low household income (<200% of the federal poverty level) associated with current use of any non-cigarette tobacco or nicotine product, including e-cigarettes?
+- Data Used: 2021-2025 CHIS one-year PUFs
 
 ## Project Outputs
 - Table 1: Characteristics of California adults aged 18–29 by household income relative to the federal poverty level, CHIS 2021–2025
