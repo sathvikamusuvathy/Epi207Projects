@@ -1,0 +1,233 @@
+/*************************************************************************************************************************/
+libname epi207 "/home/u64374363/EPI207";
+OPTIONS NOFMTERR;
+/*************************************************************************************************************************/
+
+/*Stack datasets from 2021-2025*/
+/*'fnwgt' should be in total 80*5=400 columns for 5-year data*/
+
+DATA all;
+ SET epi207.adult21 (IN=a)
+ 	 epi207.adult22 (IN=b)
+ 	 epi207.adult23	(IN=c)
+ 	 epi207.adult24 (IN=d)
+ 	 epi207.adult25 (IN=e);
+ 	 
+ ARRAY orig{80} rakedw1-rakedw80;
+ ARRAY fnw{400} fnwgt1-fnwgt400;
+ 
+ fnwgt0 = rakedw0 / 5;
+ 
+ DO i = 1 TO 80;
+ 
+ 	IF a THEN DO;
+ 		fnw{i} = orig{i} / 5;
+ 		fnw{i + 80}  = rakedw0 / 5;
+    fnw{i + 160} = rakedw0 / 5;
+    fnw{i + 240} = rakedw0 / 5;
+    fnw{i + 320} = rakedw0 / 5;
+ 		END;
+	 ELSE IF b THEN DO;
+ 		fnw{i} = rakedw0 / 5;
+ 		fnw{i + 80}  = orig{i} / 5;
+    fnw{i + 160} = rakedw0 / 5;
+    fnw{i + 240} = rakedw0 / 5;
+    fnw{i + 320} = rakedw0 / 5;
+ 		END;
+ 	 ELSE IF c THEN DO;
+ 		fnw{i} = rakedw0 / 5;
+ 		fnw{i + 80}  = rakedw0 / 5;
+    fnw{i + 160} = orig{i} / 5;
+    fnw{i + 240} = rakedw0 / 5;
+    fnw{i + 320} = rakedw0 / 5;
+ 		END;
+ 	 ELSE IF d THEN DO;
+ 		fnw{i} = rakedw0 / 5;
+ 		fnw{i + 80}  = rakedw0 / 5;
+    fnw{i + 160} = rakedw0 / 5;
+    fnw{i + 240} = orig{i} / 5;
+    fnw{i + 320} = rakedw0 / 5;
+ 		END;
+ 	 ELSE IF e THEN DO;
+ 		fnw{i} = rakedw0 / 5;
+ 		fnw{i + 80}  = rakedw0 / 5;
+    fnw{i + 160} = rakedw0 / 5;
+    fnw{i + 240} = rakedw0 / 5;
+    fnw{i + 320} = orig{i} / 5;
+ 		END;
+ 	END;
+ 	
+ 	IF a THEN year = 2021;
+ 	ELSE IF b THEN year = 2022;
+ 	ELSE IF c THEN year = 2023;
+ 	ELSE IF d THEN year = 2024;
+ 	ELSE IF e THEN year = 2025;
+ 	
+ DROP i;
+ 
+RUN;
+
+/*Restrict to population:*/
+DATA evape;
+    SET all;
+    WHERE (SRAGE_P1 = 18 OR SRAGE_P1 = 26);
+RUN;
+
+/*Recodes*/
+DATA evape_recode;
+	SET evape;
+	
+	/*Recode exposure - low-income (at or below 200% FPL)*/
+	IF POVLL IN (1,2) THEN POVLL_2CAT = 1;
+	ELSE IF POVLL IN (3,4) THEN POVLL_2CAT = 2;
+	ELSE POVLL_2CAT = .;
+
+	/*Recode outcome - nicotine pouch use excl. e-vape use*/
+	IF 	    AC135_P1 in (2,3) OR /*Current smokeless tobacco use*/
+	   		AC137_P1 in (2,3) OR /*Current smoke cigarillo/little cigar use*/
+	   		AC139_P1 in (2,3) OR /*Current big cigar use*/
+	   		AC141_P1 in (2,3) OR /*Current hookah water pipe use*/
+	   		ESMKCUR = 1 /*Current e-cig smoker*/
+	THEN Noncigpro_recode= 1;
+				
+	ELSE IF 
+	   		AC135_P1 =1 AND 
+			AC137_P1 =1 AND 
+			AC139_P1 =1 AND 
+			AC141_P1 =1 AND 
+			ESMKCUR =2 
+	THEN Noncigpro_recode = 2; 
+	ELSE Noncigpro_recode= .;
+	
+    /*Race/ethnicity*/
+    IF RACEDF_P1 = 6 THEN RACEDF_4cat = 1;
+    ELSE IF RACEDF_P1 = 5 THEN RACEDF_4cat = 2;
+    ELSE IF RACEDF_P1 = 1 THEN RACEDF_4cat = 3;
+    ELSE IF RACEDF_P1 IN (2,3,4,8) THEN RACEDF_4cat = 4;
+    ELSE RACEDF_4cat = .;
+
+	/*Education*/
+	IF AHEDC_P1 IN (1,2) THEN AHEDC_4cat = 1;
+    ELSE IF AHEDC_P1 = 3 THEN AHEDC_4cat = 2;
+    ELSE IF AHEDC_P1 IN (4,5,6) THEN AHEDC_4cat = 3;
+    ELSE IF AHEDC_P1 IN (7,8,9) THEN AHEDC_4cat = 4;
+    ELSE AHEDC_4cat = .;
+
+	LABEL POVLL_2CAT = "Low-income status by FPL <=200% (binary: 1=0FPL-199FPL, 2=200+FPL)"
+	      NONCIGPRO_RECODE = "Non-cigarette Nicotine Product use including e-vape (binary: 1=Yes, 2=No)"
+		  RACEDF_4cat = "Race/ethnicity"
+		  AHEDC_4cat = "Education (recoded)";
+		  
+	/*More variables to be added*/	  
+		  
+RUN;
+
+/*Checking*/
+PROC FREQ data=evape_recode;
+TABLES POVLL_2CAT Noncigpro_recode RACEDF_4cat AHEDC_4cat; 
+RUN;
+	
+	
+/*Variable formats*/
+
+PROC FORMAT;
+	     
+    VALUE yesnofmt
+    	1 = "Yes"
+    	2 = "No";
+   		
+   	VALUE agefmt 
+   		1 = "18-24"
+   		2 = "25-34";
+        
+    VALUE sexfmt
+        1 = "Male"
+        2 = "Female";
+
+    VALUE racefmt
+        1 = "NH White"
+        2 = "NH Black"
+        3 = "Latino"
+        4 = "NH Other";
+        
+    VALUE educfmt
+        1 = "Below high school"
+        2 = "High School/GED"
+        3 = "Some college"
+        4 = "College or higher";
+    
+    VALUE acefmt
+    	1 = "0 ACE"
+    	2 = "1 ACE"
+    	3 = "2 ACE"
+    	4 = "3 ACE"
+    	5 = "4+ ACE";
+    	
+   	VALUE ruralurbfmt
+   		1 = "Urban"
+   		2 = "Rural";
+   		
+   	VALUE fplfmt
+   		1 = "0-199% FPL"
+   		2 = "200% OR ABOVE FPL";
+   		
+   VALUE nicconcfmt
+   		1 = "I DON'T KNOW THE CONCENTRATION" 
+		2 = "0 MG/ML OR 0% (NICOTINE-FREE)"
+		3 = "1-12 MG/ML OR 0.1-1.2%"
+		4 = "13-17 MG/ML OR 1.3-1.7%"
+		5 = "18-24 MG/ML OR 1.8-2.4%"
+		6 = "25-49 MG/ML OR 2.5-4.9%"
+		7 = "50 MG/ML OR MORE OR 5% OR MORE";
+    
+    /*More variables to be added*/	
+   	
+RUN;
+
+
+/*Table 1: Weighted means, N(%)*/
+
+PROC SURVEYFREQ DATA=evape_recode
+    VARMETHOD=JACKKNIFE;
+
+    WEIGHT RAKEDW0;
+
+    REPWEIGHTS RAKEDW1-RAKEDW80 / JKCOEFS=1;
+
+    TABLES
+       
+        / CL;
+
+    FORMAT
+       ;
+
+RUN;
+
+
+/* TABLE 2: Logistic regression*/
+
+/*Crude OR*/
+%MACRO crude(var, ref=1);                                  
+PROC SURVEYLOGISTIC DATA = evape_recode
+     VARMETHOD=JACKKNIFE;  
+     WEIGHT RAKEDW0;                                      
+     REPWEIGHTS RAKEDW1-RAKEDW80 / JKCOEFS=1;   
+     CLASS &var (REF="&ref") / PARAM=REF;                  
+     MODEL Noncigpro_excl_evape (EVENT='1') = &var;
+RUN;
+%MEND;
+
+%crude ();
+
+                            
+/* Adjusted OR*/
+PROC SURVEYLOGISTIC DATA = evape_recode
+     VARMETHOD=JACKKNIFE;
+     WEIGHT fnwgt0;                                        
+     REPWEIGHTS fnwgt1-fnwgt160 / JKCOEFS=1;
+     CLASS 
+        SRAGE_P1 (REF='1')
+        /*More variables to be added*/	/                           
+           / PARAM=REF;
+     MODEL Noncigpro_excl_evape (EVENT='1') = SRAGE_P1 /*More variables to be added*/	 ;   
+RUN;
