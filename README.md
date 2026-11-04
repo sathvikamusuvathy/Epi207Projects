@@ -1,8 +1,13 @@
 # Epi207: Reproducibility in Epidemiologic Research
 ---------
-# Assignment 2:
+# Assignment 2:Low Income and Non-Cigarette Tobacco/Nicotine Product Use Among California Young Adults
 
-## Project Outputs
+## Research Question: Among California adults aged 18–29, is low household income (<200% of the federal poverty level) associated with current use of any non-cigarette tobacco or nicotine product, including e-cigarettes?
+
+##Project Outputs
+- Table 1: Characteristics of California adults aged 18–29 by household income relative to the federal poverty level, CHIS 2021–2025
+- Table 2: Crude and adjusted odds ratios for the association between low household income and current non-cigarette tobacco/nicotine product use
+- DAG: Directed acyclic graph used to identify the adjustment set
 
 
 # Assignment 1: Reproducing Published CHIS Findings
