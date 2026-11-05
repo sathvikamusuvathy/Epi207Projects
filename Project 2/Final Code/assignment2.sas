@@ -257,4 +257,25 @@ PROC SURVEYLOGISTIC DATA=ya_recode VARMETHOD=JACKKNIFE;
         year;
 RUN;
 
+/* Codebook: Frequency distributions */
+PROC FREQ DATA=ya_recode;
+    TABLES
+        POVLL POVLL_2CAT
+        Noncigpro_recode
+        AC135_P1 AC137_P1 AC139_P1 AC141_P1 ESMKCUR
+        SRAGE_P1 SRSEX
+        RACEDF_P1 RACEDF_4cat
+        AHEDC_P1 AHEDC_3cat
+        ACE_A ACE_3cat
+        UR_CLRT2
+        DSTRS30 spd
+        OCCMAIN2 occ_5cat
+        year
+        / MISSING;
+RUN;
 
+/* Codebook: Summary statistics for continuous variables */
+PROC MEANS DATA=ya_recode
+    N NMISS MEAN STD MIN MEDIAN MAX;
+    VAR rakedw0 fnwgt0;
+RUN;
